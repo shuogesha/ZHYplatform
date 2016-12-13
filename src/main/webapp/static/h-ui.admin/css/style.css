@@ -1,0 +1,5 @@
+@charset "utf-8";
+/* 你自己的样式 */
+input[readonly="readonly"]{
+	background-color: #eeeeee;
+}

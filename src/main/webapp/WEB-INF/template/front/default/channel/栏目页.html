@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>${bean.name}-${site.name}</title>
+<link rel="stylesheet" type="text/css" href="/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<script type="text/javascript" src="/lib/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+[#assign channelId=bean.id /] 
+[#include "../include/header.html"/]
+<div class="Hui-wraper cl pt-10">
+	 <div class="AD_1000"></div>
+	 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> <a class="maincolor" href="/">首页</a><span class="c-666 en">&gt;</span><span class="c-666">${bean.name}</span></nav>
+	<div class="cl ct2">
+		<section class="mn">
+		[@cms_channel_list siteId=site.id parentId=bean.id]
+		[#list tag_list as i]
+		 <a href="${i.path}">${i.name}</a> 
+		 <hr>
+			 [@cms_content_list channelId=i.id count=10]
+			[#list tag_list as ii]
+			<h1>${i_index}.<a href="/a/${ii.id}.htm" target="_blank">${ii.name}</a> </h1>
+			[/#list]
+			[/@cms_content_list]	
+		<br>
+		[/#list]
+		[/@cms_channel_list]
+		</section>
+		<aside class="sd">
+		
+		</aside>
+	</div>
+</div>
+[#include "../include/footer.html"/]
+</body>
+<script type="text/javascript" src="/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	jQuery("#slider-3 .slider").slide({mainCell:".bd ul",titCell:".hd li",trigger:"click",effect:"leftLoop",autoPlay:true,delayTime:700,interTime:7000,pnLoop:false,titOnClassName:"active"});
+});
+</script>
+</html>

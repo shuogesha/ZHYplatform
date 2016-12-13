@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="  
+           http://www.springframework.org/schema/beans   
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd    
+           http://www.springframework.org/schema/mvc   
+           http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd     
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="cacheSeconds" value="-1" />
+		<property name="basenames">
+			<list>
+				<value>classpath:languages/messages</value>
+			</list>
+		</property>
+	</bean>
+    
+    
+	<!-- 自动搜索@Controller标注的类 -->
+	<context:component-scan base-package="com.shuogesha.platform.action.front" />
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="frontInterceptor"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="frontInterceptor" class="com.shuogesha.platform.filter.FrontInterceptor" />
+	
+	<!-- 视图解析 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<!-- 定义默认的异常处理页面，当该异常类型的注册时使用 -->
+		<property name="defaultErrorView" value="error"></property>
+		<!-- 定义异常处理页面用来获取异常信息的变量名，默认名为exception -->
+		<property name="exceptionAttribute" value="ex"></property>
+		<!-- 定义需要特殊处理的异常，用类名或完全路径名作为key，异常也页名作为值 -->
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.shuogesha.oauth.web.exception.LockedException">error-locked</prop>
+
+				<!-- 这里还可以继续扩展对不同异常类型的处理 -->
+			</props>
+		</property>
+	</bean>
+	<!-- 对静态资源文件的访问 不支持访问WEB-INF目录 -->
+	<mvc:default-servlet-handler />
+
+	<bean id="stringConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/plain;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 输出对象转JSON支持 -->
+	<bean id="jsonConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringConverter" />
+				<ref bean="jsonConverter" />
+			</list>
+		</property>
+	</bean>
+	
+ 	
+	<mvc:resources mapping="/static/**" location="/static/" />
+	<mvc:resources mapping="/lib/**" location="/lib/" />
+	<mvc:resources mapping="/favicon.ico" location="/favicon.ico" />
+</beans>
